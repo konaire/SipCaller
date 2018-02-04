@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Sip Caller</string>
+
+    <!-- Main -->
+    <string name="name_hint">Whom to call</string>
+    <string name="no_name_error">Please input a sip login of person whom need to call</string>
+    <string name="call_button">CALL</string>
+
+    <!-- Call -->
+    <string name="call_title">Call</string>
 </resources>

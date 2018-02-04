@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="default_gap">16dp</dimen>
+    <dimen name="default_text_size">16sp</dimen>
+
+    <!-- Call -->
+    <dimen name="call_name_marginTop">64dp</dimen>
+    <dimen name="call_buttons_height">64dp</dimen>
+</resources>
