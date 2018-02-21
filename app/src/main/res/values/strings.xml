@@ -9,4 +9,9 @@
 
     <!-- Call -->
     <string name="call_title">Call</string>
+
+    <!-- Sip -->
+    <string name="sip_registration_started">Registration…</string>
+    <string name="sip_registration_finished">Registration was successful</string>
+    <string name="sip_registration_error">Registration failed with error #%d</string>
 </resources>

@@ -31,3 +31,4 @@ Thumbs.db
 .idea
 .gradle
 build/
+release/
