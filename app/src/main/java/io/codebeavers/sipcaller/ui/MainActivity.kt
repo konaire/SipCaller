@@ -11,7 +11,11 @@ import android.support.v7.app.AppCompatActivity
 
 import io.codebeavers.sipcaller.R
 import io.codebeavers.sipcaller.call.*
+import io.codebeavers.sipcaller.events.CallEvent
 import io.codebeavers.sipcaller.util.*
+
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,18 +40,19 @@ class MainActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        EventBus.getDefault().register(this)
         setContentView(R.layout.activity_main)
+
+        checkCallPermissions()
 
         // Start call if name of companion was inputted.
         callButton.setOnClickListener {
-            if (name.text.isEmpty()) {
-                toast(getString(R.string.no_name_error))
+            if (name.text.isNotEmpty()) {
+                makeCall()
             } else {
-                CallActivity.create(this, name.text.toString())
+                toast(getString(R.string.no_name_error))
             }
         }
-
-        checkCallPermissions()
     }
 
     override fun onResume() {
@@ -60,6 +65,8 @@ class MainActivity: AppCompatActivity() {
         if (mService != null) {
             unbindService(mConnection)
         }
+
+        EventBus.getDefault().unregister(this)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -81,17 +88,29 @@ class MainActivity: AppCompatActivity() {
     // Also you need to unregister the receiver here because it isn't needed anymore.
     fun receiveRegisterState(status: Const.SipRegistration, errorCode: Int) {
         when (status) {
-            Const.SipRegistration.ERROR -> toast(getString(R.string.sip_registration_error, errorCode))
             Const.SipRegistration.STARTED -> toast(getString(R.string.sip_registration_started))
             Const.SipRegistration.FINISHED -> {
+                unregisterReceiver()
                 callButton.isEnabled = true
-                toast(getString(R.string.sip_registration_finished))
+                toast(getString(R.string.sip_registration_finished, Const.SIP_LOGIN))
+            }
+            Const.SipRegistration.ERROR -> {
+                unregisterReceiver()
+                toast(getString(R.string.sip_registration_error, errorCode))
             }
         }
+    }
 
-        if (mReceiver != null) {
-            unregisterReceiver(mReceiver)
-            mReceiver = null
+    @Subscribe // Catches event of incoming call.
+    // Then tries to take call and show call activity.
+    fun onIncomingCallEvent(event: CallEvent) {
+        val nameText = mService?.takeAudioCall(event.intent)
+        val isStarted = nameText?.isNotEmpty() ?: false
+
+        if (isStarted) {
+            CallActivity.create(this, nameText!!, true)
+        } else {
+            toast(getString(R.string.sip_call_error))
         }
     }
 
@@ -119,17 +138,34 @@ class MainActivity: AppCompatActivity() {
     // We'll do it via service so let's bind it and register the receiver.
     private fun tryToRegister(isPermissionGranted: Boolean) {
         if (isPermissionGranted) {
-            val filter = IntentFilter(Const.ACTION_DATA_EXCHANGE)
+            val filter = IntentFilter(Const.ACTION_DATA_TO_ACTIVITY_EXCHANGE)
 
-            if (mReceiver != null) {
-                unregisterReceiver(mReceiver)
-            }
-
+            unregisterReceiver()
             mReceiver = DataReceiver()
             registerReceiver(mReceiver, filter)
             bindService(Intent(this, CallService::class.java), mConnection, Context.BIND_AUTO_CREATE)
         } else {
             finish()
+        }
+    }
+
+    private fun unregisterReceiver() {
+        if (mReceiver != null) {
+            unregisterReceiver(mReceiver)
+            mReceiver = null
+        }
+    }
+
+    // Tries to make call and show call activity.
+    private fun makeCall() {
+        val nameText = name.text.toString()
+        val sipAddress = "sip:$nameText@${Const.SIP_URL}"
+        val isStarted = mService?.makeAudioCall(sipAddress) ?: false
+
+        if (isStarted) {
+            CallActivity.create(this, nameText, false)
+        } else {
+            toast(getString(R.string.sip_call_error))
         }
     }
 }
