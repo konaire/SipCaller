@@ -3,18 +3,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/default_gap"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:padding="@dimen/default_gap">
 
     <EditText
         android:id="@+id/name"
-        android:layout_weight="1"
         android:layout_width="0px"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="@string/name_hint"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:inputType="text"
         android:maxLength="50"
         android:singleLine="true"
-        android:imeOptions="actionDone"
-        android:hint="@string/name_hint"
         android:textColor="@android:color/black"
         android:textSize="@dimen/default_text_size" />
 

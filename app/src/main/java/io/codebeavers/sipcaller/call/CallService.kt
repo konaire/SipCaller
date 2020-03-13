@@ -87,7 +87,7 @@ class CallService: Service(), SipRegistrationListener {
                 mSound?.startTone(ToneGenerator.TONE_SUP_BUSY)
                 handler.postDelayed({ mSound?.stopTone() }, 3000)
 
-                sendBroadcast(getIntentForStatusOfCall(Const.SipCall.ENDED))
+                sendBroadcast(getIntentWithEndStatusOfCall())
             }
 
             // Generates one beep and sends call end status to activity.
@@ -95,7 +95,7 @@ class CallService: Service(), SipRegistrationListener {
                 mSound?.startTone(ToneGenerator.TONE_PROP_PROMPT)
                 handler.postDelayed({ mSound?.stopTone() }, 100)
 
-                sendBroadcast(getIntentForStatusOfCall(Const.SipCall.ENDED))
+                sendBroadcast(getIntentWithEndStatusOfCall())
             }
         }
 
@@ -132,7 +132,7 @@ class CallService: Service(), SipRegistrationListener {
                     mSound?.stopRinging()
                 }
 
-                sendBroadcast(getIntentForStatusOfCall(Const.SipCall.ENDED))
+                sendBroadcast(getIntentWithEndStatusOfCall())
             }
         }
 
@@ -251,11 +251,11 @@ class CallService: Service(), SipRegistrationListener {
         return intent
     }
     
-    private fun getIntentForStatusOfCall(status: Const.SipCall): Intent {
+    private fun getIntentWithEndStatusOfCall(): Intent {
         val intent = Intent()
 
         intent.action = Const.ACTION_DATA_TO_ACTIVITY_EXCHANGE
-        intent.putExtra(Const.KEY_STATUS, status)
+        intent.putExtra(Const.KEY_STATUS, Const.SipCall.ENDED)
         return intent
     }
 

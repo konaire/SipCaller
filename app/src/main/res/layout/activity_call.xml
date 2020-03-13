@@ -2,9 +2,9 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:keepScreenOn="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
     tools:ignore="MergeRootFrame">
 
     <TextView
@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="@dimen/default_gap"
-        android:layout_marginRight="@dimen/default_gap"
         android:layout_marginTop="@dimen/call_name_marginTop"
+        android:layout_marginRight="@dimen/default_gap"
         android:gravity="center_horizontal"
         android:textColor="@android:color/black"
         android:textSize="@dimen/default_text_size" />
@@ -27,9 +27,9 @@
 
         <TextView
             android:id="@+id/greenButton"
-            android:layout_weight="1"
             android:layout_width="0px"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@android:color/holo_green_dark"
             android:gravity="center"
             android:textColor="@android:color/white"
@@ -37,9 +37,9 @@
 
         <TextView
             android:id="@+id/redButton"
-            android:layout_weight="1"
             android:layout_width="0px"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@android:color/holo_red_dark"
             android:gravity="center"
             android:textColor="@android:color/white"

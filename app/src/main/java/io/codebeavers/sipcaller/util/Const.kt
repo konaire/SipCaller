@@ -23,9 +23,9 @@ class Const {
         const val ACTION_DATA_TO_ACTIVITY_EXCHANGE = "io.codebeavers.sipcaller.DATA_TO_ACTIVITY_EXCHANGE"
         const val ACTION_DATA_TO_SERVICE_EXCHANGE = "io.codebeavers.sipcaller.DATA_TO_SERVICE_EXCHANGE"
 
-        const val SIP_URL = "ekiga.net"
-        const val SIP_LOGIN = "konair1"
-        const val SIP_PASSWORD = "321qwerty123"
+        const val SIP_URL = "sip.linphone.org"
+        const val SIP_LOGIN = "{YOUR_LOGIN}"
+        const val SIP_PASSWORD = "YOUR_PASSWORD"
 
         const val CALL_TIMEOUT = 30
     }

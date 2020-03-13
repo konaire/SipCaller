@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.media.ToneGenerator
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.view.View
 
 import io.codebeavers.sipcaller.R
@@ -63,6 +63,7 @@ class CallActivity: AppCompatActivity() {
     // Prevents going back with hardware button.
     override fun onBackPressed() { }
 
+    @Suppress("NON_EXHAUSTIVE_WHEN")
     fun updateCallStatus(status: Const.SipCall) {
         when (status) {
             Const.SipCall.STARTED -> {

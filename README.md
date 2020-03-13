@@ -1,3 +1,5 @@
+# Внимание! Данная статья устарела, поскольку этот функционал не поддерживается должным образом в новых версиях Android. В данный момент рекомендуется использовать webRTC для организации звонков.
+
 # Звонки внутри приложения с помощью SIP
 Добрый день, в этой статье я расскажу, как сделать звонки внутри андроид приложения. Эта фича будет полезна, если в вашем приложении уже есть обычный чат, но вы хотите добавить еще и голосовой.
 
@@ -198,7 +200,7 @@ class MainActivity: AppCompatActivity() {
 _Дизайн приложения_
 
 ## Регистрация клиента на SIP сервере
-Для того чтобы звонить, вы должны завести аккаунт на каком-нибудь публичном сервере. Вы можете поднять свой сервер на [Asterisk](https://www.asterisk.org/), но это уже выходит за рамки этой статьи, поэтому для простоты давайте зарегистрируемся на сервере [Ekiga](https://ekiga.im/index.php?page=register). Ekiga больше известна как программа для sip телефонии в Linux, но они также предоставляют бесплатные sip адресы, которые мы и будем использовать. Регистрация простейшая, как на обычном сайте, после нее ваш адрес будет выглядеть как: `username@ekiga.net`.
+Для того чтобы звонить, вы должны завести аккаунт на каком-нибудь публичном сервере. Вы можете поднять свой сервер на [Asterisk](https://www.asterisk.org/), но это уже выходит за рамки этой статьи, поэтому для простоты давайте зарегистрируемся на сервере [Linphone](https://www.linphone.org/freesip/myaccount). Linphone больше известна как программа для sip телефонии, но они также предоставляют бесплатные sip адресы, которые мы и будем использовать. Регистрация простейшая, как на обычном сайте, после нее ваш адрес будет выглядеть как: `username@sip.linphone.org`.
 
 Давайте вынесем из активити всю работу с регистрацией, так же в дальнейшем будет вынесен и функционал звонков. Для этого я предлагаю создать отдельный сервис, который будет работать с SIP, а для передачи данных обратно в активити будем использовать `BroadcastReceiver`. Для этого всего лишь нужно послать специальный `Intent` через `sendBroadcast(Intent intent)`, но прежде всего не забудьте объявить сервис в манифесте.
 
@@ -432,7 +434,7 @@ fun makeAudioCall(sipAddress: String): Boolean {
             mSound?.startTone(ToneGenerator.TONE_SUP_BUSY)
             handler.postDelayed({ mSound?.stopTone() }, 3000)
 
-            sendBroadcast(getIntentForStatusOfCall(Const.SipCall.ENDED))
+            sendBroadcast(getIntentWithEndStatusOfCall())
         }
 
         // Генерируем одиночный гудок и шлем статус об окончании звонка в активити.
@@ -440,7 +442,7 @@ fun makeAudioCall(sipAddress: String): Boolean {
             mSound?.startTone(ToneGenerator.TONE_PROP_PROMPT)
             handler.postDelayed({ mSound?.stopTone() }, 100)
 
-            sendBroadcast(getIntentForStatusOfCall(Const.SipCall.ENDED))
+            sendBroadcast(getIntentWithEndStatusOfCall())
         }
     }
 
@@ -477,7 +479,7 @@ fun takeAudioCall(intent: Intent): String? {
                 mSound?.stopRinging()
             }
 
-            sendBroadcast(getIntentForStatusOfCall(Const.SipCall.ENDED))
+            sendBroadcast(getIntentWithEndStatusOfCall())
         }
     }
 
@@ -686,6 +688,6 @@ class CallActivity: AppCompatActivity() {
 }
 ```
 
-На этом все. Для тестирования приложения, соберите его из исходников на [гитхабе](https://github.com/konaire/SipCaller), если вы зарегистрировали аккаунт на [Ekiga](https://ekiga.im/), то можете проверить его работоспособность, используя следующие номера: **500** - эхо, будет повторять все, что слышит от вас, **520** - тест входящих звонков, позвоните туда, дождитесь сброса, и вам перезвонит эхо (500).
+На этом все. Для тестирования приложения, соберите его из исходников на [гитхабе](https://github.com/konaire/SipCaller) для двух устройств и пробуйте позвонить :)
 
 Спасибо за внимание.

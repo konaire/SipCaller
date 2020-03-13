@@ -40,6 +40,7 @@ class SoundManager private constructor() {
         tone!!.startTone(code)
     }
 
+    @Suppress("DEPRECATION")
     fun startRinging() {
         val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
