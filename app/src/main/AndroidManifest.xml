@@ -48,11 +48,5 @@
             android:screenOrientation="portrait" />
 
         <service android:exported="false" android:name=".call.CallService" />
-
-        <receiver android:exported="false" android:name=".call.CallReceiver">
-            <intent-filter>
-                <action android:name="io.codebeavers.sipcaller.INCOMING_CALL" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>

@@ -25,7 +25,8 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity: AppCompatActivity() {
     private var mService: CallService? = null
-    private var mReceiver: DataReceiver? = null
+    private var mCallReceiver: CallReceiver? = null
+    private var mDataReceiver: DataReceiver? = null
     private val mConnection: ServiceConnection = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             mService = (service as CallService.CallBinder).getService()
@@ -66,6 +67,8 @@ class MainActivity: AppCompatActivity() {
             unbindService(mConnection)
         }
 
+        unregisterCallReceiver()
+
         EventBus.getDefault().unregister(this)
     }
 
@@ -86,19 +89,43 @@ class MainActivity: AppCompatActivity() {
 
     // This method will get registration status from the service.
     // Also you need to unregister the receiver here because it isn't needed anymore.
-    fun receiveRegisterState(status: Const.SipRegistration, errorCode: Int) {
-        when (status) {
-            Const.SipRegistration.STARTED -> toast(getString(R.string.sip_registration_started))
-            Const.SipRegistration.FINISHED -> {
-                unregisterReceiver()
-                callButton.isEnabled = true
-                toast(getString(R.string.sip_registration_finished, Const.SIP_LOGIN))
-            }
-            Const.SipRegistration.ERROR -> {
-                unregisterReceiver()
-                toast(getString(R.string.sip_registration_error, errorCode))
-            }
+    fun receiveRegisterState(status: Const.SipRegistration, errorCode: Int) = when (status) {
+        Const.SipRegistration.STARTED -> registrationStarted()
+        Const.SipRegistration.FINISHED -> registrationFinished()
+        Const.SipRegistration.ERROR -> registrationError(errorCode)
+    }
+
+    private fun registrationStarted() {
+        toast(getString(R.string.sip_registration_started))
+    }
+
+    private fun registrationFinished() {
+        unregisterDataReceiver()
+        registerCallReceiver()
+
+        callButton.isEnabled = true
+        toast(getString(R.string.sip_registration_finished, Const.SIP_LOGIN))
+    }
+
+    private fun registerCallReceiver() {
+        val filter = IntentFilter(Const.ACTION_INCOMING_CALL)
+
+        unregisterCallReceiver()
+        mCallReceiver = CallReceiver()
+        registerReceiver(mCallReceiver, filter)
+    }
+
+    private fun unregisterCallReceiver() {
+        if (mCallReceiver != null) {
+            unregisterReceiver(mCallReceiver)
+            mCallReceiver = null
         }
+    }
+
+    private fun registrationError(errorCode: Int) {
+        unregisterDataReceiver()
+
+        toast(getString(R.string.sip_registration_error, errorCode))
     }
 
     @Subscribe // Catches event of incoming call.
@@ -138,21 +165,25 @@ class MainActivity: AppCompatActivity() {
     // We'll do it via service so let's bind it and register the receiver.
     private fun tryToRegister(isPermissionGranted: Boolean) {
         if (isPermissionGranted) {
-            val filter = IntentFilter(Const.ACTION_DATA_TO_ACTIVITY_EXCHANGE)
-
-            unregisterReceiver()
-            mReceiver = DataReceiver()
-            registerReceiver(mReceiver, filter)
+            registerDataReceiver()
             bindService(Intent(this, CallService::class.java), mConnection, Context.BIND_AUTO_CREATE)
         } else {
             finish()
         }
     }
 
-    private fun unregisterReceiver() {
-        if (mReceiver != null) {
-            unregisterReceiver(mReceiver)
-            mReceiver = null
+    private fun registerDataReceiver() {
+        val filter = IntentFilter(Const.ACTION_DATA_TO_ACTIVITY_EXCHANGE)
+
+        unregisterDataReceiver()
+        mDataReceiver = DataReceiver()
+        registerReceiver(mDataReceiver, filter)
+    }
+
+    private fun unregisterDataReceiver() {
+        if (mDataReceiver != null) {
+            unregisterReceiver(mDataReceiver)
+            mDataReceiver = null
         }
     }
 
